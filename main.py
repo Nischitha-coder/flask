@@ -17,4 +17,16 @@ def about(station, date):
             "date": date,
             "temperature": temperature}
 
+@app.route("/api/v1/<station>")
+def alldates(station):
+    df = pd.read_csv("data_small/TG_STAID" + str(station).zfill(6) + ".txt", skiprows=20, parse_dates=["    DATE"])
+    return df.to_dict(orient="records")
+
+@app.route("/api/v1/yearly/<station>/<yr>")
+def yearly(station, yr):
+    df = pd.read_csv("data_small/TG_STAID" + str(station).zfill(6) + ".txt", skiprows=20)
+    df["    DATE"] = df["    DATE"].astype(str)
+    result = df[df["    DATE"].str.startswith(str(yr))].to_dict(orient="records")
+    return result
+
 app.run(debug=True)
